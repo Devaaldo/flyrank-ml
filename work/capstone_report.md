@@ -1,4 +1,4 @@
-# Capstone Report — Content Refresh Prioritization Under Multi-Tenant Search Volatility
+# Capstone Report: Content Refresh Prioritization Under Multi-Tenant Search Volatility
 
 - **Author:** Muhammad Akbar Pradana
 - **Lane:** Content Refresh Prioritization & Search Decay
@@ -10,7 +10,7 @@
 
 ## 0. Abstract
 
-In enterprise search engine optimization (SEO), editorial teams operate under strict weekly review constraints (~50 URLs per sprint), requiring automated prioritization to triage decaying content before search visibility is irreversibly lost. Utilizing the FlyRank multi-tenant search dataset (30,000 active web pages spanning 32 client domains with trailing 90-day Search Console and GA4 metrics), we evaluate content decay dynamics and model generalization. We benchmark transparent heuristic rules against shallow decision trees, Random Forest ensembles, and L2-regularized Logistic Regression evaluated strictly under a grouped **Client-Holdout validation scheme** (25 training clients vs. 7 completely unseen test clients) to prevent multi-tenant domain memorization. While Random Forest models achieved a deceptively high 94.0% Precision@50 under naive random splits, their performance collapsed by 48.0 percentage points to 46.0% on unseen domains; in contrast, L2-regularized Logistic Regression maintained strong generalization, delivering **76.0% Precision@50** (a 1.8× lift over the 42.0% heuristic baseline). We translate these calibrated scores into an operational Content Action Playbook featuring diagnostic Reason Codes, a 3-tier human governance protocol, and an exposure-weighted priority queue protecting 7,382 median impressions per flagged article.
+In enterprise search engine optimization (SEO), editorial teams operate under strict weekly review constraints (~50 URLs per sprint), requiring automated prioritization to triage decaying content before search visibility is irreversibly lost. Using the FlyRank multi-tenant search dataset (30,000 active web pages spanning 32 client domains with trailing 90-day Search Console and GA4 metrics), we evaluate content decay dynamics and model generalization. We benchmark transparent heuristic rules against shallow decision trees, Random Forest ensembles, and L2-regularized Logistic Regression evaluated strictly under a grouped **Client-Holdout validation scheme** (25 training clients vs. 7 completely unseen test clients) to prevent multi-tenant domain memorization. While Random Forest models achieved a deceptively high 94.0% Precision@50 under naive random splits, their performance collapsed by 48.0 percentage points to 46.0% on unseen domains; in contrast, L2-regularized Logistic Regression maintained strong generalization, delivering **76.0% Precision@50** (a 1.8× lift over the 42.0% heuristic baseline). We translate these calibrated scores into an operational Content Action Playbook featuring diagnostic Reason Codes, a 3-tier human governance protocol, and an exposure-weighted priority queue protecting 7,382 median impressions per flagged article.
 
 ---
 
@@ -73,10 +73,10 @@ We operationalized inferences into a dual-ranking Content Action Playbook:
 
 ## 7. Artifacts & Figures
 
-- `docs/figures/action_mix.png` — Editorial action distribution across top 50 queue.
-- `docs/figures/priority_vs_position.png` — Priority score concentration by search position tier.
-- `work/outputs/action_queue_top50.csv` — Ranked triage queue.
-- `work/outputs/playbook_summary.json` — Machine-readable validation receipts.
+- `docs/figures/action_mix.png`: Editorial action distribution across top 50 queue.
+- `docs/figures/priority_vs_position.png`: Priority score concentration by search position tier.
+- `work/outputs/action_queue_top50.csv`: Ranked triage queue.
+- `work/outputs/playbook_summary.json`: Machine-readable validation receipts.
 
 ---
 
