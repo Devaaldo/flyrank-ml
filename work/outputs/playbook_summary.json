@@ -1,0 +1,20 @@
+{
+  "total_queue_items": 50,
+  "test_clients_evaluated": 7,
+  "test_set_base_rate": 0.524,
+  "precision_at_50_pure_model": 0.76,
+  "precision_at_50_exposure_weighted": 0.54,
+  "median_impressions_top50": 7382,
+  "action_distribution": {
+    "Urgent Refresh & Title Defense": 32,
+    "Optimize Snippet & Meta Tags": 11,
+    "Routine Editorial Review": 7
+  },
+  "governance_distribution": {
+    "Tier 2: Standard Editorial Review (Senior Copywriter)": 37,
+    "Tier 3: Routine Maintenance (Junior Editor / Freelancer)": 7,
+    "Tier 1: High Stakes (Requires Senior Editor + SEO Director Sign-off)": 6
+  },
+  "reproducibility_seed": 42,
+  "status": "validated_for_capstone_paper"
+}
