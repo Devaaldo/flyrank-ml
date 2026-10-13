@@ -23,7 +23,7 @@ Enterprise web operations manage tens of thousands of published articles, but ed
 ## 2. Data safety & Leakage Defense
 
 - **Dataset:** FlyRank active modeling dataset (`content_refresh_anonymized.csv`), 30,000 rows × 44 columns across 32 clients.
-- **Quarantined Columns:** `trend_direction` and `trend_pct` were strictly excluded from training features ($X$) because the target label is derived directly from them.
+- **Quarantined Columns:** `trend_direction` and `trend_pct` were strictly excluded from training features (X) because the target label is derived directly from them.
 - **Pseudonymous Isolation:** Entity IDs (`content_id`, `client_id`) were used exclusively for grouped cross-validation splits, never as model features.
 - **Transformations:** Traffic metrics (`impressions_90d`, `clicks_90d`, `sessions_90d`) were normalized using $\log(1 + x)$. `avg_position = 0` was handled as unranked rather than rank zero.
 - **Public Safety:** Confirmed zero client names, URLs, or raw queries appear in the report or repository.
@@ -34,7 +34,7 @@ Enterprise web operations manage tens of thousands of published articles, but ed
 
 Our transparent heuristic rule baseline (developed in Week 4) combines percentile-ranked visibility, staleness, and Page 1 status:
 $$\text{Baseline Score} = 0.40 \times \text{rank}(\text{impr}) + 0.35 \times \text{rank}(\text{staleness}) + 0.25 \times (\text{pos\_norm} \times \text{visibility})$$
-On the held-out test partition ($N_{\text{test}} = 3,419$, base rate = 52.4%), this baseline achieves **Precision@50 = 42.0%** and **Precision@100 = 50.0%** (ROC-AUC = 0.600).
+On the held-out test partition (N_test = 3,419, base rate = 52.4%), this baseline achieves **Precision@50 = 42.0%** and **Precision@100 = 50.0%** (ROC-AUC = 0.600).
 
 ---
 
@@ -61,7 +61,7 @@ We evaluated three models against the baseline on the exact same client-holdout 
 
 We operationalized inferences into a dual-ranking Content Action Playbook:
 - **Pure Model Ranking:** P@50 = 76.0%, median impressions = 1,684.
-- **Exposure-Weighted Ranking:** $\text{Priority Score} = P(\text{decay}) \times \log(1 + \text{impr}_{90d})$, lifting median impressions to **7,382** (P@50 = 54.0%).
+- **Exposure-Weighted Ranking:** Priority Score = P(decay) * log(1 + impr_90d), lifting median impressions to **7,382** (P@50 = 54.0%).
 - **Prescribed Interventions:**
   - `Urgent Refresh & Title Defense` (64%): Page 1 assets at acute risk of dropping off.
   - `Optimize Snippet & Meta Tags` (22%): Striking-distance pages (Pos 11–20) with CTR < 0.5%.

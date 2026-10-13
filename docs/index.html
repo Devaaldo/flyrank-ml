@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --bg: #ffffff;
@@ -431,8 +432,8 @@
     <h3>Data Safety & Sanitation Protocol:</h3>
     <ul>
       <li><strong>Zero Private Exposure:</strong> All client URLs, company names, and raw search queries are pre-pseudonymized into irreversible entity hashes (e.g., <code>client_8527a891e2</code>, <code>content_339b357d04c7</code>).</li>
-      <li><strong>Quarantined Leaky Attributes:</strong> The dataset includes columns <code>trend_direction</code> and <code>trend_pct</code>. Because the target label is derived from these metrics, both fields were quarantined from the feature matrix $X$ prior to model ingestion.</li>
-      <li><strong>Skew Normalization:</strong> Raw traffic metrics exhibit extreme heavy-tailed distributions; logarithmic transformations ($\log(1 + x)$) were applied to impressions, clicks, and sessions.</li>
+      <li><strong>Quarantined Leaky Attributes:</strong> The dataset includes columns <code>trend_direction</code> and <code>trend_pct</code>. Because the target label is derived from these metrics, both fields were quarantined from the feature matrix <em>X</em> prior to model ingestion.</li>
+      <li><strong>Skew Normalization:</strong> Raw traffic metrics exhibit extreme heavy-tailed distributions; logarithmic transformations (log(1 + <em>x</em>)) were applied to impressions, clicks, and sessions.</li>
       <li><strong>Zero Rank Handling:</strong> Average position values of <code>0</code> represent unranked pages (zero impressions), which were imputed with median deep rank rather than interpreted as position zero.</li>
     </ul>
   </section>
@@ -443,7 +444,7 @@
     
     <h3>Target Label Definition</h3>
     <p>
-      The binary decay target $y \in \{0, 1\}$ is formulated as:
+      The binary decay target <em>y</em> &in; {0, 1} is formulated as:
     </p>
     <pre><code>y = 1  if  trend_direction == "down"  (>10% impression drop in last 30d vs prior 30d)
 y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
@@ -473,7 +474,7 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
   <section id="results">
     <h2><span class="section-num">4.</span> Empirical Results & Grand Benchmark</h2>
     <p>
-      We benchmarked four distinct modeling strategies against the identical client-holdout test partition ($N_{\text{test}} = 3,419$ across 7 unseen domains, base rate = 52.4%). Performance was evaluated at operational review capacities: <strong>Precision@50</strong> and <strong>Precision@100</strong>.
+      We benchmarked four distinct modeling strategies against the identical client-holdout test partition (<em>N</em><sub>test</sub> = 3,419 across 7 unseen domains, base rate = 52.4%). Performance was evaluated at operational review capacities: <strong>Precision@50</strong> and <strong>Precision@100</strong>.
     </p>
 
     <div class="table-container">
@@ -540,7 +541,7 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
     </ul>
     <p>
       <strong>Why did Random Forest collapse while Logistic Regression succeeded?</strong><br>
-      Decision trees greedily partition feature space using arbitrary metric cutoffs (e.g., $\text{impressions} \le 12,400 \land \text{avg\_position} \le 8.2$). In multi-tenant environments, these non-linear splits effectively encode the traffic baseline of specific training domains. When applied to unseen clients with differing baseline scale, these brittle decision boundaries fail entirely.
+      Decision trees greedily partition feature space using arbitrary metric cutoffs (e.g., impressions &le; 12,400 and avg_position &le; 8.2). In multi-tenant environments, these non-linear splits effectively encode the traffic baseline of specific training domains. When applied to unseen clients with differing baseline scale, these brittle decision boundaries fail entirely.
     </p>
     <p>
       In contrast, L2-regularized Logistic Regression applies monotonic linear weights: holding all else equal, older content with slipping visibility increases decay risk across every tenant. This monotonic constraint prevents cross-feature domain memorization, yielding a superior <strong>76.0% Precision@50</strong> on new client organizations.
@@ -559,7 +560,7 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
     <ul>
       <li><strong>Confounding Seasonality:</strong> The 90-day observation window cannot isolate annual seasonality (e.g., holiday or tax cycles). Seasonal declines will flag as structural decay unless filtered by domain experts.</li>
       <li><strong>Unsupervised New Domains:</strong> For websites indexed under 6 months, search engine ranking volatility produces high false-positive rates; the model requires at least 180 days of search history.</li>
-      <li><strong>Temporal Overlap:</strong> In the starter export, the 90-day aggregate features partially overlap with the 60-day momentum label window. Full warehouse deployment requires temporal partitioning ($T_{\text{feature}} \le T_0 < T_{\text{label}}$).</li>
+      <li><strong>Temporal Overlap:</strong> In the starter export, the 90-day aggregate features partially overlap with the 60-day momentum label window. Full warehouse deployment requires temporal partitioning (<em>T</em><sub>feature</sub> &le; <em>T</em><sub>0</sub> &lt; <em>T</em><sub>label</sub>).</li>
     </ul>
   </section>
 
@@ -575,8 +576,8 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
       We evaluated two distinct ranking policies for editorial triage:
     </p>
     <ul>
-      <li><strong>Pure Model Ranking ($P(\text{decay})$):</strong> Maximizes precision of decay identification (76.0% Precision@50), but flags pages with lower median visibility (1,684 impressions).</li>
-      <li><strong>Exposure-Weighted Priority Score:</strong> Defined as $\text{Priority Score} = P(\text{decay}) \times \log(1 + \text{impressions}_{90d})$. This policy elevates high-volume commercial assets, increasing median protected impressions by <strong>4.4&times; to 7,382 impressions</strong> per article while maintaining a robust 54.0% Precision@50.</li>
+      <li><strong>Pure Model Ranking (<em>P</em>(decay)):</strong> Maximizes precision of decay identification (76.0% Precision@50), but flags pages with lower median visibility (1,684 impressions).</li>
+      <li><strong>Exposure-Weighted Priority Score:</strong> Defined as <strong>Priority Score</strong> = <em>P</em>(decay) &times; log(1 + impressions<sub>90d</sub>). This policy elevates high-volume commercial assets, increasing median protected impressions by <strong>4.4&times; to 7,382 impressions</strong> per article while maintaining a robust 54.0% Precision@50.</li>
     </ul>
 
     <div class="figure-card">
@@ -595,8 +596,8 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
 
     <h3>Prescriptive Archetypes & Action Rules</h3>
     <ol>
-      <li><strong>Urgent Refresh & Title Defense (64% of queue):</strong> High-exposure articles currently on Page 1 ($1 \le \text{avg\_position} \le 10$) facing momentum decline. Focus: factual updating and snippet tightening to prevent drop-off.</li>
-      <li><strong>Optimize Snippet & Meta Tags (22% of queue):</strong> Striking-distance pages ($11 \le \text{avg\_position} \le 20$) with depressed CTR ($<0.50\%$). Focus: rewrites of title and meta description (15-minute turnaround, immediate CTR lift).</li>
+      <li><strong>Urgent Refresh & Title Defense (64% of queue):</strong> High-exposure articles currently on Page 1 (1 &le; avg_position &le; 10) facing momentum decline. Focus: factual updating and snippet tightening to prevent drop-off.</li>
+      <li><strong>Optimize Snippet & Meta Tags (22% of queue):</strong> Striking-distance pages (11 &le; avg_position &le; 20) with depressed CTR (&lt; 0.50%). Focus: rewrites of title and meta description (15-minute turnaround, immediate CTR lift).</li>
       <li><strong>Routine Editorial Review (14% of queue):</strong> General decay cases requiring competitor and query intent audits.</li>
     </ol>
 
