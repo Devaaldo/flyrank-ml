@@ -91,3 +91,25 @@ We operationalized inferences into a dual-ranking Content Action Playbook:
 ## 9. Acknowledgments & Data Credit
 
 Built on the FlyRank ML Internship dataset, hosted and provided by [FlyRank AI](https://flyrank.ai). We thank the FlyRank engineering mentorship team for providing access to real-world search telemetry and establishing rigorous benchmarks for applied machine learning.
+---
+
+## 10. Showcase, Demo Outline & Shareable Cuts (ML-12)
+
+### 1. 5-Minute Technical Demo Outline
+1. **Minute 0:00 - 1:00 (The Problem):** Demonstrate the editorial bottleneck: enterprise sites with 30k+ pages and capacity for only ~50 reviews per week. Page 1 decay loses traffic fast.
+2. **Minute 1:00 - 2:15 (The Pitfall of Complex Models):** Show how a Random Forest model looks superhuman (94% Precision@50) on a random split, but collapses by 48 points to 46% on unseen clients due to multi-tenant scale memorization.
+3. **Minute 2:15 - 3:30 (The Monotonic Solution):** Present the L2-regularized Logistic Regression model delivering 76.0% Precision@50 on unseen domains (1.8x lift over heuristics).
+4. **Minute 3:30 - 4:15 (The Playbook in Action):** Walk through the exposure-weighted queue protecting 7,382 median impressions per flagged article.
+5. **Minute 4:15 - 5:00 (Governance & Boundaries):** Detail the 3-tier review protocol and explicit No-Go automation rules.
+
+### 2. Social-Post Cut (LinkedIn / Technical Community)
+> Why did a simple Logistic Regression model beat an advanced Random Forest by 30% in production SEO ranking?
+>
+> During my Machine Learning internship at FlyRank AI, we tackled content decay across 30,000 active pages and 32 enterprise domains. When evaluating model prioritization, Random Forest achieved an eye-popping 94% Precision@50 under a random split. But under a rigorous Client-Holdout split (evaluating strictly on unseen client domains), the tree ensemble collapsed to 46%, severely overfitting to domain-specific traffic scale.
+>
+> By contrast, monotonic L2-regularized Logistic Regression held strong at 76.0% Precision@50 (vs. 42% rule baseline). We combined this into an operational Content Action Playbook with transparent reason codes and human-in-the-loop governance. Full research paper: https://devaaldo.github.io/flyrank-ml/
+
+### 3. Employer-Facing 3-Sentence Summary
+> 1. Built an end-to-end Machine Learning prioritization pipeline on the FlyRank multi-tenant search dataset (30,000 active pages across 32 enterprise domains) to triage decaying content under strict editorial bandwidth constraints (~50 URLs/sprint).
+> 2. Identified and diagnosed a 48-percentage-point cross-domain generalization gap in complex tree ensembles, deploying a monotonic regularized model achieving 76.0% Precision@50 on held-out client organizations.
+> 3. Operationalized model inferences into an exposure-weighted Content Action Playbook protecting 7,382 median search impressions per review item with 3-tier human governance, reproducible code, and public deployment.
