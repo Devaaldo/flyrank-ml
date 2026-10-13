@@ -30,7 +30,7 @@ Second, diagnostic action archetypes: 64% of items were classified as Page 1 Tit
 
 ## 2. Social-Post Cut (LinkedIn / Technical Community)
 
-Why did a simple Logistic Regression model beat an advanced Random Forest by 30% in production SEO ranking?
+Why did a simple Logistic Regression model beat an advanced Random Forest by 30 percentage points (a 1.65x relative lift) in production SEO ranking?
 
 During my Machine Learning internship at FlyRank AI, we tackled content decay across 30,000 active web pages and 32 enterprise domains. When evaluating model prioritization, Random Forest achieved an eye-popping 94% Precision@50 under a naive random split. But under a rigorous Client-Holdout split (evaluating strictly on unseen client domains), the tree ensemble collapsed to 46%, heavily overfitting to tenant-specific scale baselines.
 

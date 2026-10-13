@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FlyRank Content Decay Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: fixed header with numbered tabs, one slide stage, control bar. Dark-first, single look by request. */
+:root{
+  --bg:#090d16; --surface:#111827; --surface-2:#0d1320; --line:#1f2937; --line-2:#2a3546;
+  --fg:#e7ebf2; --muted:#8c96a8; --dim:#5b6577;
+  --emerald:#34d399; --emerald-soft:rgba(52,211,153,.14);
+  --blue:#60a5fa; --blue-soft:rgba(96,165,250,.14);
+  --rose:#f2777a; --amber:#f5b85b;
+  --font-sans:"Geist",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"Geist Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  --step-0:clamp(.9rem,.85rem + .2vw,1rem);
+  --step-1:clamp(1.05rem,1rem + .3vw,1.2rem);
+  --step-3:clamp(1.6rem,1.2rem + 1.6vw,2.4rem);
+  --step-4:clamp(2.2rem,1.5rem + 3vw,3.6rem);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-sans);font-size:var(--step-0);line-height:1.55;-webkit-font-smoothing:antialiased}
+.shell{min-height:100%;display:grid;grid-template-rows:auto 1fr auto;max-width:1180px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:20px 16px;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand b{font-weight:600;font-size:.95rem;letter-spacing:-.01em}
+.brand span{font-family:var(--font-mono);font-size:.72rem;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+nav[role=tablist]{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:7px;font-size:.82rem;color:var(--muted);transition:background .15s,color .15s}
+nav button .n{font-family:var(--font-mono);font-size:.7rem;color:var(--dim)}
+nav button:hover{color:var(--fg)}
+nav button[aria-selected=true]{background:var(--surface);color:var(--fg);box-shadow:inset 0 0 0 1px var(--line-2)}
+nav button[aria-selected=true] .n{color:var(--emerald)}
+nav button:focus-visible,.ctrl button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+main{min-width:0}
+.slide{display:grid;gap:28px;align-content:start;animation:in .35s ease both}
+@keyframes in{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.slide{animation:none}nav button{transition:none}.bar i{transition:none!important}}
+.eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--emerald)}
+h1,h2{margin:0;font-weight:600;letter-spacing:-.025em;text-wrap:balance;line-height:1.1}
+h1{font-size:var(--step-4)}
+h2{font-size:var(--step-3)}
+.lede{max-width:64ch;color:var(--muted);font-size:var(--step-1);margin:0}
+.lede strong{color:var(--fg);font-weight:500}
+.head{display:grid;gap:12px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;min-width:0;display:grid;gap:12px;align-content:start}
+.label{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.big{font-size:clamp(1.9rem,1.4rem + 1.8vw,2.8rem);font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.big small{font-size:.45em;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:4px}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+code{font-family:var(--font-mono);font-size:.82em;background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--fg)}
+
+/* slide 1: capacity strip */
+.capacity{display:grid;gap:10px}
+.cap-track{position:relative;height:44px;border-radius:8px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 10px),var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.cap-fill{position:absolute;inset:0 auto 0 0;width:calc(50/30000*100%);min-width:3px;background:var(--emerald)}
+.cap-legend{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;font-size:.82rem;color:var(--muted)}
+.cap-legend b{color:var(--emerald);font-weight:500}
+
+/* bar chart */
+.chart{display:grid;gap:18px;position:relative}
+.row{display:grid;grid-template-columns:minmax(0,150px) 1fr;gap:14px;align-items:center}
+.row .rl{font-size:.85rem;color:var(--muted)}
+.row .rl b{display:block;color:var(--fg);font-weight:500}
+.bar{position:relative;height:30px;background:var(--surface-2);border-radius:6px;border:1px solid var(--line)}
+.bar::after{content:"";position:absolute;left:52.4%;top:-5px;bottom:-5px;border-left:1.5px dashed var(--amber);z-index:2}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:5px;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.bar .v{z-index:3;position:absolute;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:.8rem;font-variant-numeric:tabular-nums;padding-left:8px;white-space:nowrap}
+.plot{position:relative;display:grid;gap:18px}
+.baseline{position:absolute;top:-8px;bottom:-8px;border-left:1.5px dashed var(--amber);pointer-events:none}
+.baseline span{position:absolute;top:-22px;left:6px;font-family:var(--font-mono);font-size:.7rem;color:var(--amber);white-space:nowrap}
+.axis{display:grid;grid-template-columns:minmax(0,150px) 1fr;gap:14px}
+.ticks{position:relative;height:16px;font-family:var(--font-mono);font-size:.7rem;color:var(--dim)}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.ticks span:first-child{transform:none}
+.ticks span:last-child{transform:translateX(-100%)}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.gap-callout{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.gap-callout .big{color:var(--rose)}
+
+/* slide 3: 50-cell grids */
+.models{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.model{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px;min-width:0}
+.model.win{border-color:rgba(52,211,153,.45);box-shadow:0 0 0 1px rgba(52,211,153,.12) inset}
+.model header{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:nowrap}
+.model header b{font-weight:500;font-size:.9rem}
+.model header .mono{font-size:1.3rem;font-weight:500}
+.cells{display:grid;grid-template-columns:repeat(10,1fr);gap:3px}
+.cells i{aspect-ratio:1;border-radius:2px;border:1px solid var(--line-2);background:transparent}
+.cells i.hit{border-color:transparent}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.85rem}
+th,td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+thead th{font-family:var(--font-mono);font-weight:400;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td.best{color:var(--emerald)}
+tr.champ td:first-child{color:var(--fg);font-weight:500}
+
+/* slide 4 */
+.stack{display:flex;height:46px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.stack div{display:flex;align-items:center;padding-inline:10px;font-family:var(--font-mono);font-size:.78rem;color:#06110c;white-space:nowrap;overflow:hidden;min-width:0}
+.keys{display:grid;gap:10px}
+.key{display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:start;font-size:.88rem}
+.key i{width:12px;height:12px;border-radius:3px;margin-top:5px}
+.key b{font-weight:500}
+.key p{margin:2px 0 0;color:var(--muted);font-size:.8rem}
+.key .mono{color:var(--muted)}
+.formula{font-family:var(--font-mono);font-size:.82rem;color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;white-space:nowrap}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair>div{display:grid;gap:4px}
+.warn{border-left:2px solid var(--amber);padding-left:12px;font-size:.85rem;color:var(--muted);margin:0}
+.warn b{color:var(--amber);font-weight:500}
+
+/* slide 5 */
+.serp{display:grid;grid-template-columns:5fr 15fr 10fr;gap:4px}
+.tier{border-radius:10px;padding:16px;display:grid;gap:8px;align-content:start;min-width:0;border:1px solid var(--line)}
+.tier .pos{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:var(--muted)}
+.tier b{font-weight:600;font-size:1rem}
+.tier p{margin:0;font-size:.84rem;color:var(--muted)}
+.t1{background:linear-gradient(var(--emerald-soft),var(--emerald-soft)),var(--surface);border-color:rgba(52,211,153,.4)}
+.t2{background:linear-gradient(var(--blue-soft),var(--blue-soft)),var(--surface)}
+.t3{background:var(--surface)}
+.nogo{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.nogo li{display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:.88rem}
+.nogo li::before{content:"";width:14px;height:14px;margin-top:4px;border:1.5px solid var(--rose);border-radius:3px;background:linear-gradient(45deg,transparent 45%,var(--rose) 45% 55%,transparent 55%)}
+.nogo b{font-weight:500}
+.nogo span{display:block;color:var(--muted);font-size:.8rem}
+.triggers{display:grid;gap:8px;font-size:.85rem;color:var(--muted)}
+.triggers div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.triggers div:last-child{border-bottom:0;padding-bottom:0}
+.triggers b{color:var(--fg);font-weight:500;font-family:var(--font-mono);font-size:.8rem;white-space:nowrap}
+
+footer{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;border-top:1px solid var(--line);padding-top:14px}
+.ctrl{display:flex;align-items:center;gap:10px}
+.ctrl button{all:unset;cursor:pointer;padding:8px 14px;border:1px solid var(--line-2);border-radius:8px;font-size:.85rem;background:var(--surface)}
+.ctrl button:hover:not([disabled]){border-color:var(--muted)}
+.ctrl button[disabled]{opacity:.35;cursor:default}
+.ctrl .count{font-family:var(--font-mono);font-size:.8rem;color:var(--muted);min-width:44px;text-align:center}
+.links{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted)}
+.links a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.links a:hover{color:var(--fg)}
+.kbd{font-family:var(--font-mono);font-size:.7rem;color:var(--dim)}
+
+@media (max-width:640px){
+  nav button .t{display:none}
+  nav button{padding:6px 12px}
+  .row,.axis{grid-template-columns:1fr;gap:6px}
+  .axis>span{display:none}
+  .serp{grid-template-columns:1fr}
+  .pair{grid-template-columns:1fr}
+  .kbd{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <header>
+    <div class="brand">
+      <b>Prioritizing Content Refresh Under Real-World Search Volatility</b>
+      <span>FlyRank ML Internship · Capstone · M. Akbar Pradana</span>
+    </div>
+    <nav role="tablist" aria-label="Slides" id="tabs"></nav>
+  </header>
+
+  <main id="stage" aria-live="polite">
+
+    <!-- 1 -->
+    <section class="slide" data-title="Bottleneck" id="s1" role="tabpanel">
+      <div class="head">
+        <div class="eyebrow">01 · The problem</div>
+        <h1>30,000 pages. 50 review slots.</h1>
+        <p class="lede">Editorial teams can deeply audit about <strong>50 URLs per weekly sprint</strong>. The question isn't whether pages decay. It's which 50 a human should open first, before a Page-1 article slides off and takes its traffic with it.</p>
+      </div>
+
+      <div class="card capacity">
+        <div class="label">Weekly capacity vs. inventory, drawn to scale</div>
+        <div class="cap-track" role="img" aria-label="50 of 30,000 pages, 0.17 percent"><div class="cap-fill"></div></div>
+        <div class="cap-legend"><span><b>50 slots</b> = 0.17% of the inventory</span><span>30,000 active pages</span></div>
+      </div>
+
+      <div class="grid g4">
+        <div class="card"><div class="label">Pages</div><div class="big">30,000</div><p class="note">Trailing 90-day Search Console + GA4 metrics</p></div>
+        <div class="card"><div class="label">Client domains</div><div class="big">32</div><p class="note">Multi-tenant: traffic scale varies wildly by client</p></div>
+        <div class="card"><div class="label">Test set</div><div class="big">3,419</div><p class="note">Pages from 7 clients the model never saw</p></div>
+        <div class="card"><div class="label">Base rate</div><div class="big">52.4<small>%</small></div><p class="note">Of test pages carry the decline label. Random picks hit about half.</p></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-title="The trap" id="s2" role="tabpanel" hidden>
+      <div class="head">
+        <div class="eyebrow">02 · The trap</div>
+        <h2>Random Forest looked superhuman, until it met new clients</h2>
+        <p class="lede">A random split puts pages from the same client in both train and test. The trees learned <strong>each client's traffic scale</strong>, not how content decays. Holding out whole clients exposed it.</p>
+      </div>
+
+      <div class="card">
+        <div class="legend">
+          <span><i style="background:var(--blue)"></i>Naive random split</span>
+          <span><i style="background:var(--rose)"></i>Client-holdout (7 unseen clients)</span>
+          <span><i style="background:transparent;border:1.5px dashed var(--amber)"></i>Base rate 52.4%</span>
+        </div>
+        <div class="chart">
+          <div class="row"><div class="rl"><b>Precision@50</b>random split</div><div class="bar"><i data-w="94" style="background:var(--blue)"></i><span class="v" data-at="94">94.0% · 47/50</span></div></div>
+          <div class="row"><div class="rl"><b>Precision@50</b>client-holdout</div><div class="bar"><i data-w="46" style="background:var(--rose)"></i><span class="v" data-at="46">46.0% · 23/50</span></div></div>
+          <div class="row"><div class="rl"><b>Precision@100</b>random split</div><div class="bar"><i data-w="91" style="background:var(--blue)"></i><span class="v" data-at="91">91.0%</span></div></div>
+          <div class="row"><div class="rl"><b>Precision@100</b>client-holdout</div><div class="bar"><i data-w="43" style="background:var(--rose)"></i><span class="v" data-at="43">43.0%</span></div></div>
+          <div class="axis"><span></span><div class="ticks"><span style="left:0">0</span><span style="left:25%">25</span><span style="left:50%">50</span><span style="left:75%">75</span><span style="left:100%">100%</span></div></div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="gap-callout"><div class="big">−48 pts</div><div class="label">P@50 drop, same model</div></div>
+          <p class="note">On unseen clients the forest's top 50 hit less often than picking at random (46% vs 52.4%). ROC-AUC fell from 0.759 to 0.664.</p>
+        </div>
+        <div class="card">
+          <div class="label">Confession test</div>
+          <p class="note" style="color:var(--fg)">Injecting the label source <code>trend_pct</code> as a feature sends ROC-AUC to <span class="mono">1.000</span> and P@50 to <span class="mono">100%</span>.</p>
+          <p class="note">The pipeline catches leakage when it's there, and the final 13-feature set doesn't contain it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" data-title="Champion" id="s3" role="tabpanel" hidden>
+      <div class="head">
+        <div class="eyebrow">03 · The champion</div>
+        <h2>Why monotonic weights won: 76% Precision@50</h2>
+        <p class="lede">L2-regularized Logistic Regression gives every feature one direction of effect: older, less-visible pages carry more risk, whatever the client. That rule <strong>transfers to clients with a different traffic scale</strong>. Tree splits tuned to training-client scale don't.</p>
+      </div>
+
+      <div class="models" id="models"></div>
+      <p class="note">Each grid is one model's top-50 queue on the 7 held-out clients. Filled cells count true decliners; they show the count, not their rank order.</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Model</th><th>Precision@50</th><th>Precision@100</th><th>ROC-AUC</th><th>Avg precision</th><th>Recall</th><th>F1</th></tr></thead>
+          <tbody>
+            <tr class="champ"><td>Logistic Regression (L2)</td><td class="best">76.0%</td><td class="best">78.0%</td><td>0.658</td><td class="best">0.660</td><td>0.576</td><td>0.613</td></tr>
+            <tr><td>Decision Tree (depth 5)</td><td>70.0%</td><td>61.0%</td><td>0.654</td><td>0.623</td><td>0.619</td><td>0.632</td></tr>
+            <tr><td>Random Forest (200 × depth 10)</td><td>46.0%</td><td>43.0%</td><td class="best">0.664</td><td>0.628</td><td class="best">0.772</td><td class="best">0.689</td></tr>
+            <tr><td>Heuristic baseline (W04)</td><td>42.0%</td><td>50.0%</td><td>0.600</td><td>0.570</td><td>0.581</td><td>0.595</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">The forest still wins ROC-AUC and recall, so it's better at sweeping the whole at-risk population. For a 50-slot queue, the top of the ranking is what matters, and there the linear model is 1.8× the baseline.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" data-title="Playbook" id="s4" role="tabpanel" hidden>
+      <div class="head">
+        <div class="eyebrow">04 · The playbook</div>
+        <h2>A score becomes a queue an editor can work</h2>
+        <p class="lede">Every page in the top 50 gets a <strong>reason code</strong> and a <strong>prescribed action</strong>, mapped from its SERP position and click-through rate.</p>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="label">Action mix · top 50 queue</div>
+          <div class="stack" role="img" aria-label="32 urgent refresh, 11 snippet optimization, 7 routine review">
+            <div style="flex:32;background:var(--emerald)">32 · 64%</div>
+            <div style="flex:11;background:var(--blue)">11 · 22%</div>
+            <div style="flex:7;background:var(--muted)">7</div>
+          </div>
+          <div class="keys">
+            <div class="key"><i style="background:var(--emerald)"></i><div><b>Urgent Refresh &amp; Title Defense</b><p>Page 1 (position 1–10), P(decay) ≥ 0.50 · <code>page_one_decay_risk</code></p></div><span class="mono">32</span></div>
+            <div class="key"><i style="background:var(--blue)"></i><div><b>Optimize Snippet &amp; Meta Tags</b><p>Striking distance (position 11–20), CTR &lt; 0.5%, ≥ 500 impressions · <code>low_ctr_visible_page</code></p></div><span class="mono">11</span></div>
+            <div class="key"><i style="background:var(--muted)"></i><div><b>Routine Editorial Review</b><p>General decay signals</p></div><span class="mono">7</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="label">Two ways to order the same 3,419 pages</div>
+          <div class="pair">
+            <div><span class="note">Pure model</span><div class="formula">rank by P(decay)</div></div>
+            <div><span class="note">Exposure-weighted</span><div class="formula">P(decay) × log(1 + impr₉₀d)</div></div>
+          </div>
+          <div class="pair">
+            <div><div class="label">Precision@50</div><div class="big" style="color:var(--emerald)">76<small>%</small></div></div>
+            <div><div class="label">Precision@50</div><div class="big">54<small>%</small></div></div>
+          </div>
+          <div class="pair">
+            <div><div class="label">Median impressions</div><div class="big mono" style="font-size:1.6rem">1,684</div></div>
+            <div><div class="label">Median impressions</div><div class="big mono" style="font-size:1.6rem;color:var(--blue)">7,382 <small>4.4×</small></div></div>
+          </div>
+          <p class="warn"><b>Trade-off:</b> weighting by exposure puts 4.4× more traffic in the queue, but its 54% precision sits barely above the 52.4% base rate. Use it to protect high-traffic assets, not as the accuracy story.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-title="Governance" id="s5" role="tabpanel" hidden>
+      <div class="head">
+        <div class="eyebrow">05 · Governance</div>
+        <h2>The model ranks. People decide.</h2>
+        <p class="lede">Review authority scales with what a page stands to lose. The higher it ranks, the more senior the sign-off.</p>
+      </div>
+
+      <div>
+        <div class="label" style="margin-bottom:10px">Review tier by SERP position · widths follow position ranges 1–5, 6–20, 21–30+</div>
+        <div class="serp">
+          <div class="tier t1"><span class="pos">POSITION 1–5</span><b>Tier 1 · High stakes</b><p>Senior Editor and SEO Director sign off before live text is touched.</p></div>
+          <div class="tier t2"><span class="pos">POSITION 6–20</span><b>Tier 2 · Standard review</b><p>Senior Copywriter or Content Specialist.</p></div>
+          <div class="tier t3"><span class="pos">POSITION 21+</span><b>Tier 3 · Routine</b><p>Delegable to a junior editor or freelancer.</p></div>
+        </div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="label">The no-go list · never automated</div>
+          <ul class="nogo">
+            <li><div><b>No unsupervised AI overwrite</b><span>Queue output never pipes straight into an LLM that rewrites live pages.</span></div></li>
+            <li><div><b>No automated 301s or bulk deletion</b><span>Removing URLs can kill external backlinks that hold up domain authority.</span></div></li>
+            <li><div><b>No padding short utility pages</b><span>Calculators, FAQ, contact and policy pages are short on purpose.</span></div></li>
+            <li><div><b>No auto-swapped snippets</b><span>Meta tags follow brand and conversion intent, not keyword stuffing.</span></div></li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="label">When the playbook expires</div>
+          <div class="triggers">
+            <div><span>Google core update shifts organic CTR baselines</span><b>retrain</b></div>
+            <div><span>Editor-checked precision two sprints in a row</span><b>&lt; 55%</b></div>
+            <div><span>Scheduled retrain, client-holdout validated</span><b>every 90 days</b></div>
+            <div><span>Pass bar on new clients</span><b>P@50 ≥ 70%</b></div>
+          </div>
+          <p class="note">Claims stay observational. This ranks pages for review; it doesn't prove a refresh causes recovery.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="ctrl">
+      <button id="prev" type="button">← Prev</button>
+      <span class="count" id="count">1 / 5</span>
+      <button id="next" type="button">Next →</button>
+      <span class="kbd">← → keys</span>
+    </div>
+    <div class="links">
+      <a href="https://devaaldo.github.io/flyrank-ml/" target="_blank" rel="noopener">Deployed paper</a>
+      <a href="https://github.com/Devaaldo/flyrank-ml" target="_blank" rel="noopener">Repository</a>
+      <span>Data: <a href="https://flyrank.ai" target="_blank" rel="noopener">FlyRank AI</a></span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var tabs=document.getElementById('tabs');
+  var cur=0;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // model grids
+  var models=[
+    {name:'Logistic Regression',hit:38,c:'var(--emerald)',win:true},
+    {name:'Decision Tree',hit:35,c:'var(--blue)'},
+    {name:'Random Forest',hit:23,c:'var(--rose)'},
+    {name:'Heuristic baseline',hit:21,c:'var(--muted)'}
+  ];
+  var mw=document.getElementById('models');
+  models.forEach(function(m){
+    var d=document.createElement('div');d.className='model'+(m.win?' win':'');
+    var cells='';for(var i=0;i<50;i++){cells+=i<m.hit?'<i class="hit" style="background:'+m.c+'"></i>':'<i></i>';}
+    d.innerHTML='<header><b>'+m.name+'</b><span class="mono" style="color:'+m.c+'">'+m.hit+'/50</span></header><div class="cells" role="img" aria-label="'+m.hit+' of 50 correct">'+cells+'</div>';
+    mw.appendChild(d);
+  });
+
+  slides.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.type='button';b.setAttribute('role','tab');b.id='tab'+(i+1);
+    b.setAttribute('aria-controls',s.id);
+    b.innerHTML='<span class="n">0'+(i+1)+'</span><span class="t">'+s.dataset.title+'</span>';
+    b.addEventListener('click',function(){go(i)});
+    tabs.appendChild(b);
+    s.setAttribute('aria-labelledby',b.id);
+  });
+
+  function bars(s,on){
+    s.querySelectorAll('.bar').forEach(function(bar){
+      var i=bar.querySelector('i'),v=bar.querySelector('.v'),w=+i.dataset.w;
+      i.style.width=on?w+'%':(reduce?w+'%':'0%');
+      if(w>70){v.style.left='auto';v.style.right=(100-w)+'%';v.style.paddingLeft='0';v.style.paddingRight='8px';v.style.color='#08111f';}else{v.style.left=w+'%';}
+    });
+  }
+  function go(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    slides.forEach(function(s,j){s.hidden=j!==cur});
+    [].forEach.call(tabs.children,function(b,j){b.setAttribute('aria-selected',j===cur);b.tabIndex=j===cur?0:-1});
+    document.getElementById('count').textContent=(cur+1)+' / '+slides.length;
+    document.getElementById('prev').disabled=cur===0;
+    document.getElementById('next').disabled=cur===slides.length-1;
+    var s=slides[cur];
+    if(s.querySelector('.bar')){bars(s,false);requestAnimationFrame(function(){requestAnimationFrame(function(){bars(s,true)})});}
+    try{history.replaceState(null,'','#'+s.id)}catch(e){}
+  }
+  document.getElementById('prev').addEventListener('click',function(){go(cur-1)});
+  document.getElementById('next').addEventListener('click',function(){go(cur+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){go(cur+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault();}
+    else if(e.key==='Home'){go(0)}else if(e.key==='End'){go(slides.length-1)}
+  });
+  var m=/^#s([1-5])$/.exec(location.hash||'');
+  // set bars visible at rest for slide 2 before first show
+  slides.forEach(function(s){if(s.querySelector('.bar'))bars(s,true)});
+  go(m?+m[1]-1:0);
+})();
+</script>
+</body>
+</html>

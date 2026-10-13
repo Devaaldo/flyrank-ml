@@ -359,6 +359,14 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
         Capstone Notebook
       </a>
+      <a href="deck.html" target="_blank" rel="noopener">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path d="M10 9l5 3-5 3V9z"/></svg>
+        Interactive Slide Deck
+      </a>
+      <a href="deck.html" target="_blank" rel="noopener">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path d="M10 9l5 3-5 3V9z"/></svg>
+        Interactive Slide Deck
+      </a>
       <a href="https://huggingface.co/datasets/FlyRank/internship-warehouse" target="_blank" rel="noopener">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7z"/><path d="M9 12h6"/></svg>
         Hugging Face Dataset
@@ -560,7 +568,8 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
     <ul>
       <li><strong>Confounding Seasonality:</strong> The 90-day observation window cannot isolate annual seasonality (e.g., holiday or tax cycles). Seasonal declines will flag as structural decay unless filtered by domain experts.</li>
       <li><strong>Unsupervised New Domains:</strong> For websites indexed under 6 months, search engine ranking volatility produces high false-positive rates; the model requires at least 180 days of search history.</li>
-      <li><strong>Temporal Overlap:</strong> In the starter export, the 90-day aggregate features partially overlap with the 60-day momentum label window. Full warehouse deployment requires temporal partitioning (<em>T</em><sub>feature</sub> &le; <em>T</em><sub>0</sub> &lt; <em>T</em><sub>label</sub>).</li>
+      <li><strong>Label Proxy & Co-Occurrence Window:</strong> The binary target label <code>is_declining_label</code> is derived from <code>trend_direction</code> (which compares the last 30 days of impressions against the prior 30 days). In this cross-sectional starter export, those 60 days form a sub-window of the 90-day period measured by <code>impressions_90d</code>. While <code>trend_direction</code> and <code>trend_pct</code> were strictly quarantined from the feature matrix, the underlying traffic metrics share observational co-occurrence within the single static snapshot. Production deployment on the 79M-row warehouse requires strict point-in-time temporal partitioning (<em>T</em><sub>feature</sub> &le; <em>T</em><sub>0</sub> &lt; <em>T</em><sub>label</sub>).</li>
+      <li><strong>Divergence from Starter Pipeline Baseline:</strong> In FlyRank's unscaled reference baseline (<code>scripts/run_all.py</code>), an unscaled Random Forest scored higher (0.68 to 0.74 P@50) than an unregularized Logistic Regression baseline (~0.40). In our production lane, this relationship inverted (LR 76.0% vs. RF 46.0%). Our pipeline introduced logarithmic transforms on skewed traffic counts, applied standard feature normalization (<code>StandardScaler</code>), and evaluated strictly under grouped client holdouts. Under normalized inputs, linear Logistic Regression learned stable global monotonic weights that transferred robustly across unseen client tenants, whereas tree ensembles partitioned on raw volume scales, causing severe domain overfitting on unseen holdout clients.</li>
     </ul>
   </section>
 
@@ -644,7 +653,7 @@ y = 0  otherwise (stable, growing, or flat momentum)</code></pre>
     <h3>2. Social-Post Cut (LinkedIn & Technical Community)</h3>
     <div class="callout" style="background: #ffffff; border-left: 4px solid #0f172a;">
       <p style="font-style: italic; margin-bottom: 12px; color: #0f172a; font-weight: 600;">
-        Why did a simple Logistic Regression model beat a 200-tree Random Forest by 30% in production search ranking?
+        Why did a simple Logistic Regression model beat a 200-tree Random Forest by 30 percentage points (a 1.65&times; relative lift) in production search ranking?
       </p>
       <p style="margin-bottom: 12px;">
         During my Machine Learning internship at FlyRank AI, we evaluated content decay prioritization across 30,000 active pages and 32 enterprise client domains. When evaluated using standard random cross-validation, Random Forest achieved an eye-popping 94.0% Precision@50. But when tested under a rigorous Client-Holdout split (evaluating strictly on unseen client domains), the tree ensemble collapsed to 46.0%, heavily overfitting to tenant-specific scale baselines.

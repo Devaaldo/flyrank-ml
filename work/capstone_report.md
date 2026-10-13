@@ -49,11 +49,13 @@ We evaluated three models against the baseline on the exact same client-holdout 
 
 ## 5. Validation Design & Limitations
 
-- **Validation:** 25 clients for training, 7 unseen clients for testing.
-- **Limitations:**
+- **Validation:** 25 clients for training, 7 unseen clients for testing (client-holdout grouped split).
+- **Limitations & Methodological Disclosures:**
   1. *Observational only:* No causal claims without randomized A/B intervention.
   2. *Seasonality confounding:* Rolling 90-day window does not isolate annual seasonal spikes.
   3. *Domain age requirement:* Requires at least 180 days of search history.
+  4. *Label proxy & co-occurrence:* `is_declining_label` is derived from `trend_direction` (last 30d vs prior 30d), which overlaps within the same 90-day aggregate snapshot. Full warehouse deployment requires strict point-in-time temporal partitioning.
+  5. *Divergence from starter reference pipeline:* In FlyRank's unscaled starter baseline, Random Forest scored ~0.68–0.74 P@50 while unregularized Logistic Regression scored ~0.40. In our production lane, this inverted (LR 76.0% vs. RF 46.0%) because our pipeline introduced log-transformed traffic counts, StandardScaler normalization, and strict client-holdout evaluation. Linear monotonic weights transferred cleanly across unseen tenants, whereas unconstrained tree ensembles partitioned on raw volume scales and overfit to training domains.
 
 ---
 
@@ -103,7 +105,7 @@ Built on the FlyRank ML Internship dataset, hosted and provided by [FlyRank AI](
 5. **Minute 4:15 - 5:00 (Governance & Boundaries):** Detail the 3-tier review protocol and explicit No-Go automation rules.
 
 ### 2. Social-Post Cut (LinkedIn / Technical Community)
-> Why did a simple Logistic Regression model beat an advanced Random Forest by 30% in production SEO ranking?
+> Why did a simple Logistic Regression model beat an advanced Random Forest by 30 percentage points (a 1.65x relative lift) in production SEO ranking?
 >
 > During my Machine Learning internship at FlyRank AI, we tackled content decay across 30,000 active pages and 32 enterprise domains. When evaluating model prioritization, Random Forest achieved an eye-popping 94% Precision@50 under a random split. But under a rigorous Client-Holdout split (evaluating strictly on unseen client domains), the tree ensemble collapsed to 46%, severely overfitting to domain-specific traffic scale.
 >
